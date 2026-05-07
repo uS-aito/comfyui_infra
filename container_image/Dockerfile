@@ -19,8 +19,8 @@ WORKDIR /app/ComfyUI
 RUN pip install --no-cache-dir  -r requirements.txt
 
 # ユーザー設定
-RUN groupadd -g 1000 appuser && \
-    useradd -m -u 1000 -g 1000 appuser && \
+RUN groupadd -g 1050 appuser && \
+    useradd -m -u 1050 -g 1050 appuser && \
     chown -R appuser:appuser /app
 USER appuser
 
