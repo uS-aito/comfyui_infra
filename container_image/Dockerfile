@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 必要なモジュールをインストール
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  git \
+  git python3.12-venv\
   && rm -rf /var/lib/apt/lists/*
 
 # python仮想環境作成(PEP 668)
