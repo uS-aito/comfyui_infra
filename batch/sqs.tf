@@ -1,0 +1,13 @@
+resource "aws_sqs_queue" "dlq" { 
+  name = "${var.project}-dlq" 
+}
+
+resource "aws_sqs_queue" "main" {
+  name                       = "${var.project}-queue"
+  visibility_timeout_seconds = 600
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.dlq.arn
+    maxReceiveCount     = 3
+  })
+}
+
