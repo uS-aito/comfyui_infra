@@ -9,6 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   git \
   && rm -rf /var/lib/apt/lists/*
 
+# python仮想環境作成(PEP 668)
+RUN python3 -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
+
 # comfyインストール
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git
 WORKDIR /app/ComfyUI
