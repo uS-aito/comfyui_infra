@@ -27,8 +27,10 @@ RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack comfyui-impact-pac
 RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Subpack && \
     cd ComfyUI-Impact-Subpack && \
     pip install -r requirements.txt
+    # sedについてはhttps://github.com/opencv/opencv-python/issues/1183
 RUN git clone https://github.com/yolain/ComfyUI-Easy-Use && \
     cd ComfyUI-Easy-Use && \
+    sed -i 's/^opencv-python-headless$/opencv-python-headless==4.12.0.88/' requirements.txt && \ 
     pip install -r requirements.txt
 RUN git clone https://github.com/ssitu/ComfyUI_UltimateSDUpscale
 RUN git clone https://github.com/rgthree/rgthree-comfy.git
@@ -53,4 +55,4 @@ USER appuser
 EXPOSE 8188
 
 # comfy起動
-ENTRYPOINT ["python", "main.py", "--listen", "0.0.0.0"] 
+ENTRYPOINT ["python", "/app/ComfyUI/main.py", "--listen", "0.0.0.0"] 
