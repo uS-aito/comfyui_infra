@@ -19,7 +19,7 @@ WORKDIR /app/ComfyUI
 RUN pip install --no-cache-dir  -r requirements.txt
 
 # comfyuiのカスタムノードをインストール
-WORKDIR /ComfyUI/custom_nodes
+WORKDIR /app/ComfyUI/custom_nodes
 
 RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack comfyui-impact-pack && \
     cd comfyui-impact-pack && \
@@ -32,7 +32,7 @@ RUN git clone https://github.com/yolain/ComfyUI-Easy-Use && \
     pip install -r requirements.txt
 RUN git clone https://github.com/ssitu/ComfyUI_UltimateSDUpscale
 RUN git clone https://github.com/rgthree/rgthree-comfy.git
-RUN git clone git@github.com:alexopus/ComfyUI-Image-Saver.git && \
+RUN git clone https://github.com/alexopus/ComfyUI-Image-Saver.git && \
     cd ComfyUI-Image-Saver && \
     pip install -r requirements.txt
 RUN git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
