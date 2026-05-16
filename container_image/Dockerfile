@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 必要なモジュールをインストール
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  git python3.12-venv libxcb1\
+  git python3.12-venv libxcb1 libgl1 libglib2.0-0t64\
   && rm -rf /var/lib/apt/lists/*
 
 # python仮想環境作成(PEP 668)
