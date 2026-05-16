@@ -4,12 +4,19 @@ data "aws_ssm_parameter" "mlami" {
 
 # EC2インスタンスの作成
 resource "aws_instance" "example_instance" {
+  count         = var.create_ec2 ? 1 : 0
+
   ami           = data.aws_ssm_parameter.mlami.value # EC2インスタンスのAMI IDをSSMパラメータから取得します
   instance_type = "g4dn.xlarge"              # インスタンスタイプを設定します
   subnet_id     = aws_subnet.public_subnet.id
 
   # Systems Managerとsecret managerにアクセスするためのロール
   iam_instance_profile = aws_iam_instance_profile.test_profile.name
+
+  root_block_device {
+    volume_size = var.root_volume_size
+    volume_type = "gp3"
+  }
 
   # docker install
   user_data = <<-EOF
@@ -27,9 +34,29 @@ resource "aws_instance" "example_instance" {
               mkfs -t xfs /dev/nvme1n1
               mkdir /models
               mount /dev/nvme1n1 /models
-              # install and start comfyui image
+              # make models directory
               mkdir /models/loras
-              docker run -d --gpus all -p 8188:8188 -v /models/loras:/app/ComfyUI/models/loras --name comfyui ghcr.io/us-aito/comfyui_infra/comfyui:latest
+              mkdir /models/StableDiffusion
+              mkdir /models/Ultralytics
+              mkdir /models/docker
+              # install s5cmd
+              curl -L -o /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_Linux-64bit.tar.gz
+              tar -xzf /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz
+              chmod +x s5cmd
+              mv s5cmd /usr/local/bin/
+              # download models from s3
+              # s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/StableDiffusion/*' /models/StableDiffusion/
+              # s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/Ultralytics/*' /models/Ultralytics/
+              # s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/lora/*' /models/loras/
+              # download comfyui custom image from S3
+              # s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/docker/comfyui.tar.gz' /models/docker/comfyui.tar.gz
+              # docker load -i /models/docker/comfyui.tar.gz
+              # install and start comfyui image
+              docker run -d --gpus all -p 8188:8188 \
+              #   -v /models/loras:/app/ComfyUI/models/loras \
+              #   -v /models/StableDiffusion:/app/ComfyUI/models/StableDiffusion \
+              #   -v /models/Ultralytics:/app/ComfyUI/models/Ultralytics \
+                --name comfyui ghcr.io/us-aito/comfyui_infra/comfyui:latest
               # cloudinit end time
               date
               EOF

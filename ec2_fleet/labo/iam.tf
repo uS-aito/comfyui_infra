@@ -25,6 +25,54 @@ resource "aws_iam_role_policy_attachment" "AmazonSSMManagedInstanceCore_attachme
   role       = aws_iam_role.example_role.name
 }
 
+# SQSからデータを読み出すためのポリシー
+resource "aws_iam_role_policy" "sqs_read_policy" {
+  name = "sqs-read-policy"
+  role = aws_iam_role.example_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes",
+          "sqs:ChangeMessageVisibility",
+        ]
+        Resource = [
+          aws_sqs_queue.labo_queue.arn,
+          aws_sqs_queue.labo_dlq.arn,
+        ]
+      }
+    ]
+  })
+}
+
+# S3バケットからモデルをダウンロードするためのポリシー
+resource "aws_iam_role_policy" "s3_model_read_policy" {
+  name = "s3-model-read-policy"
+  role = aws_iam_role.example_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket",
+        ]
+        Resource = [
+          "arn:aws:s3:::comfyui-models-${data.aws_caller_identity.current.account_id}",
+          "arn:aws:s3:::comfyui-models-${data.aws_caller_identity.current.account_id}/*",
+        ]
+      }
+    ]
+  })
+}
+
 # SSMを使うためのプロファイル
 resource "aws_iam_instance_profile" "test_profile" {
   name = "test_profile"

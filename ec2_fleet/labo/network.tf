@@ -13,7 +13,9 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_eip" "example_eip" {
-  instance   = aws_instance.example_instance.id
+  count      = var.create_ec2 ? 1 : 0
+
+  instance   = aws_instance.example_instance[0].id
   depends_on = [aws_internet_gateway.example_igw]
 }
 
