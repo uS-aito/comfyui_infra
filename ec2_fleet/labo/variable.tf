@@ -1,6 +1,6 @@
 variable create_ec2 {
   type    = bool
-  default = false
+  default = true
 }
 
 variable "root_volume_size" {

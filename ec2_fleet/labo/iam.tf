@@ -73,6 +73,30 @@ resource "aws_iam_role_policy" "s3_model_read_policy" {
   })
 }
 
+# S3バケットに出力ファイルをアップロードするためのポリシー
+resource "aws_iam_role_policy" "s3_output_write_policy" {
+  name = "s3-output-write-policy"
+  role = aws_iam_role.example_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:GetBucketLocation"
+        ]
+        Resource = [
+          "arn:aws:s3:::output-${data.aws_caller_identity.current.account_id}",
+          "arn:aws:s3:::output-${data.aws_caller_identity.current.account_id}/*",
+        ]
+      }
+    ]
+  })
+}
+
 # SSMを使うためのプロファイル
 resource "aws_iam_instance_profile" "test_profile" {
   name = "test_profile"
