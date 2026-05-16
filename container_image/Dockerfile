@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 必要なモジュールをインストール
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  git python3.12-venv\
+  git python3.12-venv libxcb1\
   && rm -rf /var/lib/apt/lists/*
 
 # python仮想環境作成(PEP 668)
@@ -27,10 +27,9 @@ RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack comfyui-impact-pac
 RUN git clone https://github.com/ltdrdata/ComfyUI-Impact-Subpack && \
     cd ComfyUI-Impact-Subpack && \
     pip install -r requirements.txt
-    # sedについてはhttps://github.com/opencv/opencv-python/issues/1183
+    # sedについてはhttps://github.com/opencv/opencv-python/issues/1183 #     sed -i 's/^opencv-python-headless$/opencv-python-headless==4.12.0.88/' requirements.txt && \ 
 RUN git clone https://github.com/yolain/ComfyUI-Easy-Use && \
     cd ComfyUI-Easy-Use && \
-    sed -i 's/^opencv-python-headless$/opencv-python-headless==4.12.0.88/' requirements.txt && \ 
     pip install -r requirements.txt
 RUN git clone https://github.com/ssitu/ComfyUI_UltimateSDUpscale
 RUN git clone https://github.com/rgthree/rgthree-comfy.git
