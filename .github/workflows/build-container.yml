@@ -33,12 +33,6 @@ jobs:
           echo "version=${GITHUB_REF_NAME#container-}" >> "$GITHUB_OUTPUT"
           echo "image=${REGISTRY}/${GITHUB_REPOSITORY,,}/comfyui" >> "$GITHUB_OUTPUT"
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-northeast-1
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -47,6 +41,12 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
             ${{ steps.meta.outputs.image }}:latest
+
+      - name: install s5cmd
+        run: |
+          curl -L -o /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_Linux-64bit.tar.gz
+          tar -xzf /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz
+          chmod +x s5cmd
 
       - name: Build Docker image for export
         run: |
@@ -58,4 +58,4 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp comfyui-${{ steps.meta.outputs.version }}.tar.gz s3://comfyui-models-438465126106/docker/comfyui-${{ steps.meta.outputs.version }}.tar.gz
+          s5cmd cp comfyui-${{ steps.meta.outputs.version }}.tar.gz s3://comfyui-models-438465126106/docker/comfyui-${{ steps.meta.outputs.version }}.tar.gz
