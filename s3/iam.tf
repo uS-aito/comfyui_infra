@@ -1,4 +1,6 @@
 # github actionsからアクセスするためのロール
+# ref: https://zenn.dev/rescuenow/articles/1976c01e28b3cc
+# ref: https://zenn.dev/kou_pg_0131/articles/gh-actions-oidc-aws
 resource "aws_iam_role" "github_actions_role" {
   name = "github-actions-role"
 
