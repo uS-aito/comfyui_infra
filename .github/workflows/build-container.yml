@@ -33,29 +33,27 @@ jobs:
           echo "version=${GITHUB_REF_NAME#container-}" >> "$GITHUB_OUTPUT"
           echo "image=${REGISTRY}/${GITHUB_REPOSITORY,,}/comfyui" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: ./container_image
-          push: true
-          tags: |
-            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}
-            ${{ steps.meta.outputs.image }}:latest
-
-      - name: install s5cmd
+      - name: Install s5cmd
         run: |
           curl -L -o /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_Linux-64bit.tar.gz
-          tar -xzf /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz
-          chmod +x s5cmd
+          tar -xzf /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz -C /usr/local/bin
+          chmod +x /usr/local/bin/s5cmd
 
-      - name: Build Docker image for export
+      - name: Build Docker image
         run: |
-          docker build -t comfyui:${{ steps.meta.outputs.version }} ./container_image
+          docker build \
+            -t ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }} \
+            -t ${{ steps.meta.outputs.image }}:latest \
+            ./container_image
 
-      - name: Save and compress Docker image
+      - name: Push to GHCR and export to S3 in parallel
         run: |
-          docker save comfyui:${{ steps.meta.outputs.version }} | gzip > comfyui-${{ steps.meta.outputs.version }}.tar.gz
+          docker push ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }} &
+          docker push ${{ steps.meta.outputs.image }}:latest &
 
-      - name: Upload to S3
-        run: |
-          s5cmd cp comfyui-${{ steps.meta.outputs.version }}.tar.gz s3://comfyui-models-438465126106/docker/comfyui-${{ steps.meta.outputs.version }}.tar.gz
+          docker save ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }} \
+            | gzip > comfyui-${{ steps.meta.outputs.version }}.tar.gz
+          s5cmd cp comfyui-${{ steps.meta.outputs.version }}.tar.gz \
+            s3://comfyui-models-438465126106/docker/comfyui-${{ steps.meta.outputs.version }}.tar.gz
+
+          wait
