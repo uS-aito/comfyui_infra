@@ -33,7 +33,7 @@ RUN git clone https://github.com/yolain/ComfyUI-Easy-Use && \
     pip install -r requirements.txt
 RUN git clone https://github.com/ssitu/ComfyUI_UltimateSDUpscale
 RUN git clone https://github.com/rgthree/rgthree-comfy.git
-RUN git clone https://github.com/alexopus/ComfyUI-Image-Saver.git && \
+RUN git clone https://github.com/giriss/comfy-image-saver.git && \
     cd ComfyUI-Image-Saver && \
     pip install -r requirements.txt
 RUN git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
@@ -51,9 +51,6 @@ RUN git clone https://github.com/WASasquatch/was-node-suite-comfyui.git && \
     cd was-node-suite-comfyui && \
     pip install -r requirements.txt
 RUN git clone https://github.com/ComfyAssets/ComfyUI_Selectors.git
-RUN git clone https://github.com/farizrifqi/ComfyUI-Image-Saver.git && \
-    cd ComfyUI-Image-Saver && \
-    pip install -r requirements.txt
 
 # ユーザー設定
 RUN groupadd -g 1050 appuser && \
