@@ -39,6 +39,7 @@ resource "aws_instance" "example_instance" {
               mkdir /models/StableDiffusion
               mkdir /models/Ultralytics
               mkdir /models/docker
+              mkdir /models/RealESRGAN
               # install s5cmd
               curl -L -o /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz https://github.com/peak/s5cmd/releases/download/v2.3.0/s5cmd_2.3.0_Linux-64bit.tar.gz
               tar -xzf /tmp/s5cmd_2.3.0_Linux-64bit.tar.gz
@@ -48,15 +49,17 @@ resource "aws_instance" "example_instance" {
               s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/StableDiffusion/*' /models/StableDiffusion/
               s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/Ultralytics/*' /models/Ultralytics/
               s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/lora/*' /models/loras/
+              s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/RealESRGAN/*' /models/RealESRGAN/
               # download comfyui custom image from S3
               # s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/docker/comfyui.tar.gz' /models/docker/comfyui.tar.gz
               # docker load -i /models/docker/comfyui.tar.gz
               # install and start comfyui image
               docker run -d --gpus all -p 8188:8188 \
                 -v /models/loras:/app/ComfyUI/models/loras \
-                -v /models/StableDiffusion:/app/ComfyUI/models/StableDiffusion \
-                -v /models/Ultralytics:/app/ComfyUI/models/Ultralytics \
-                --name comfyui ghcr.io/us-aito/comfyui_infra/comfyui:latest
+                -v /models/StableDiffusion:/app/ComfyUI/models/checkpoints \
+                -v /models/Ultralytics:/app/ComfyUI/models/ultralytics \
+                -v /models/RealESRGAN:/app/ComfyUI/models/RealESRGAN \
+                --name comfyui ghcr.io/us-aito/comfyui_infra/comfyui:0.0.6
               # cloudinit end time
               date
               EOF
