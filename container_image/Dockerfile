@@ -47,9 +47,6 @@ RUN git clone https://github.com/Fannovel16/comfyui_controlnet_aux && \
 RUN git clone https://github.com/cubiq/ComfyUI_essentials.git && \
     cd ComfyUI_essentials && \
     pip install -r requirements.txt
-RUN git clone https://github.com/farizrifqi/ComfyUI-Image-Saver.git && \
-    cd ComfyUI-Image-Saver && \
-    pip install -r requirements.txt
 RUN git clone https://github.com/WASasquatch/was-node-suite-comfyui.git && \
     cd was-node-suite-comfyui && \
     pip install -r requirements.txt
