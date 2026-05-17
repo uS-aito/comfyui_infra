@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 resource "aws_s3_bucket" "models" {
   bucket = "comfyui-models-${data.aws_caller_identity.current.account_id}"
 }
