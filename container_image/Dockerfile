@@ -34,7 +34,7 @@ RUN git clone https://github.com/yolain/ComfyUI-Easy-Use && \
 RUN git clone https://github.com/ssitu/ComfyUI_UltimateSDUpscale
 RUN git clone https://github.com/rgthree/rgthree-comfy.git
 RUN git clone https://github.com/giriss/comfy-image-saver.git && \
-    cd ComfyUI-Image-Saver && \
+    cd comfy-image-saver && \
     pip install -r requirements.txt
 RUN git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
     cd ComfyUI-KJNodes && \
