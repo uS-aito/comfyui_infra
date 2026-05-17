@@ -63,9 +63,9 @@ jobs:
           docker push ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }} &
           docker push ${{ steps.meta.outputs.image }}:latest &
 
-          docker save ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }} \
-            | gzip > comfyui-${{ steps.meta.outputs.version }}.tar.gz
-          s5cmd cp comfyui-${{ steps.meta.outputs.version }}.tar.gz \
-            s3://comfyui-models-438465126106/docker/comfyui-${{ steps.meta.outputs.version }}.tar.gz
+          docker save ${{ steps.meta.outputs.image }}:latest \
+            | gzip > comfyui.tar.gz
+          s5cmd cp comfyui.tar.gz \
+            s3://comfyui-models-438465126106/docker/comfyui.tar.gz
 
           wait

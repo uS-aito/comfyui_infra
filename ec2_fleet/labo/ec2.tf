@@ -51,15 +51,15 @@ resource "aws_instance" "example_instance" {
               s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/lora/*' /models/loras/
               s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/RealESRGAN/*' /models/RealESRGAN/
               # download comfyui custom image from S3
-              # s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/docker/comfyui.tar.gz' /models/docker/comfyui.tar.gz
-              # docker load -i /models/docker/comfyui.tar.gz
+              s5cmd cp 's3://comfyui-models-${data.aws_caller_identity.current.account_id}/docker/comfyui.tar.gz' /models/docker/comfyui.tar.gz
+              docker load -i /models/docker/comfyui.tar.gz
               # install and start comfyui image
               docker run -d --gpus all -p 8188:8188 \
                 -v /models/loras:/app/ComfyUI/models/loras \
                 -v /models/StableDiffusion:/app/ComfyUI/models/checkpoints \
                 -v /models/Ultralytics:/app/ComfyUI/models/ultralytics \
-                -v /models/RealESRGAN:/app/ComfyUI/models/RealESRGAN \
-                --name comfyui ghcr.io/us-aito/comfyui_infra/comfyui:0.0.6
+                -v /models/RealESRGAN:/app/ComfyUI/models/upscale_models \
+                --name comfyui ghcr.io/us-aito/comfyui_infra/comfyui:latest
               # cloudinit end time
               date
               EOF
